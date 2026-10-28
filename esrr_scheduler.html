@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESRR Scheduler Lab</title>
+<style>
+:root{
+  --bg:#f4f7fb;--panel:#ffffff;--ink:#18263b;--mute:#64748b;
+  --line:#dbe4ef;--acc:#3157a4;--accbg:#edf3ff;--bad:#c2414b;
+  --idle:#e9eef6;--shadow:0 8px 24px rgba(27,48,82,.06)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{padding:34px clamp(18px,4vw,52px) 22px;max-width:1360px;margin:auto;border-bottom:1px solid var(--line)}
+header h1{font-family:Inter,system-ui,sans-serif;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.04em;color:#172f59}
+header p{margin:8px 0 0;color:var(--mute);max-width:78ch}
+.wrap{max-width:1360px;margin:auto;padding:24px clamp(18px,4vw,52px) 42px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:22px;align-items:start}
+@media(max-width:940px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.panel h2{font-family:Inter,system-ui,sans-serif;font-size:18px;font-weight:750;letter-spacing:-.02em;margin:0 0 16px;color:#20395f}
+label{display:block;font-size:12px;font-weight:700;letter-spacing:.035em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+input,select,button{font:inherit;color:var(--ink)}
+input,select{width:100%;padding:10px 12px;border:1px solid #cbd7e6;border-radius:8px;background:#fff;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(49,87,164,.12)}
+button{cursor:pointer;border-radius:8px;border:1px solid #cbd7e6;background:#fff;padding:9px 13px;font-weight:650;transition:background .15s,border-color .15s,transform .15s}
+button:hover{border-color:var(--acc);background:#f5f8ff}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+button.primary:hover{background:#26488e}
+:focus-visible{outline:3px solid #7aa2f7;outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;align-items:end;margin-bottom:12px}
+.field{margin-bottom:15px}
+.msg{min-height:20px;font-size:13px;color:var(--bad);margin:0 0 8px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;white-space:nowrap}
+th,td{padding:10px 11px;text-align:right;border-bottom:1px solid #e8edf4}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:750;color:#62738b;font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:#f7f9fc}
+thead th:first-child{border-radius:7px 0 0 0}thead th:last-child{border-radius:0 7px 0 0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#f8faff}
+.chip{display:inline-block;min-width:34px;text-align:center;padding:3px 9px;border-radius:6px;color:#fff;font-weight:750;font-size:12px}
+.x{padding:4px 9px;font-size:12px;color:var(--bad);background:#fff7f7;border-color:#f0d6d8}
+.actions{display:flex;gap:9px;margin-top:16px}.actions .primary{flex:1}
+.empty{color:var(--mute);font-size:14px;padding:12px 0}
+.verdict{font-size:14px;font-weight:650;line-height:1.6;margin:0 0 20px;padding:14px 16px;background:var(--accbg);border:1px solid #d8e5ff;border-left:4px solid var(--acc);border-radius:9px}
+.lane{margin-bottom:18px}
+.lane h3{font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:750;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.lane h3 small{font:12px system-ui,sans-serif;color:var(--mute);font-weight:500}
+.lane.hl{padding:13px;border:1px solid #9ab6f3;background:#f7f9ff;border-radius:10px}
+.bar{display:flex;height:42px;background:var(--idle);border-radius:7px;overflow:hidden;border:1px solid #e1e8f2}
+.seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:750;border-right:1px solid rgba(255,255,255,.55);overflow:hidden}
+.seg.idle{background:repeating-linear-gradient(45deg,#e9eef6,#e9eef6 5px,#dbe4ef 5px,#dbe4ef 7px);color:#66758a}
+.axis{position:relative;height:22px;font-size:11px;color:var(--mute);margin:5px 0 0}
+.axis span{position:absolute;transform:translateX(-50%)}
+.scroll{overflow-x:auto}
+td.best{font-weight:800;color:#2455a6;background:#f0f5ff}
+details{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:750;color:#29436c}
+details ol,details ul{margin:10px 0 8px 20px;padding:0}details li{margin-bottom:7px}
+.note{font-size:12px;line-height:1.6;color:#5f7088;background:#f5f8fc;border:1px solid #e5ebf3;padding:12px 14px;border-radius:8px}
+footer{max-width:1360px;margin:auto;padding:0 clamp(18px,4vw,52px) 30px;color:var(--mute);font-size:12px;line-height:1.6}
+.stack>*+*{margin-top:22px}
+@media(max-width:560px){.panel{padding:16px}.row{grid-template-columns:1fr 1fr}.row button{grid-column:1/-1}header{padding-top:25px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ESRR Scheduler Lab</h1>
+  <p>Compare Round Robin, SRTF and ESRR (Efficient Shortest Remaining Time Round Robin) on the same processes. A minor implementation of Sinha et al., 2020.</p>
+</header>
+<div class="wrap">
+  <aside class="panel" aria-label="Process input">
+    <h2>Processes</h2>
+    <div class="field"><label for="preset">Load a sample workload</label>
+      <select id="preset"><option value="a">Mixed workload (4 processes)</option><option value="b">Long job vs. short arrivals (6)</option><option value="c">Simulator example (4)</option><option value="">Start empty</option></select></div>
+    <form id="f" class="row" autocomplete="off">
+      <div><label for="at">Arrival</label><input id="at" type="number" min="0" step="1" value="0" required></div>
+      <div><label for="bt">Burst</label><input id="bt" type="number" min="1" step="1" value="5" required></div>
+      <button class="primary" type="submit">Add</button>
+    </form>
+    <p class="msg" id="msg" role="alert"></p>
+    <div id="plist"></div>
+    <div class="field" style="margin-top:14px"><label for="q">Time quantum (used by RR)</label><input id="q" type="number" min="1" step="1" value="3"></div>
+    <div class="field"><label for="mode">ESRR quantum</label>
+      <select id="mode"><option value="dyn">Dynamic: mean remaining time each round</option><option value="fix">Fixed: same as the quantum above</option></select></div>
+    <div class="actions"><button class="primary" id="run" type="button">Run comparison</button><button id="clr" type="button">Clear</button></div>
+  </aside>
+  <main class="stack">
+    <section class="panel" aria-live="polite">
+      <h2>Execution timelines</h2>
+      <p class="verdict" id="verdict">Add at least one process to compare the algorithms.</p>
+      <div id="lanes"></div>
+    </section>
+    <section class="panel">
+      <h2>Performance comparison</h2>
+      <div class="scroll" id="cmp"></div>
+      <p class="note" style="margin-top:10px">Best value in each column is highlighted. Max wait is the longest any single process waited, which shows starvation of long jobs. Context switches count changes from one process to a different one.</p>
+      <details><summary>ESRR per-process results</summary><div class="scroll" id="detail"></div></details>
+    </section>
+    <section class="panel">
+      <h2>How ESRR works here</h2>
+      <ol>
+        <li>Work in rounds. A round ends when every ready process has had one turn.</li>
+        <li>Within a round, always pick the ready process with the shortest remaining time (the SRTF rule). Ties go to the earlier arrival.</li>
+        <li>Run it for at most one time quantum, then it waits for the next round (the Round Robin rule). If it needs less than a quantum, it finishes.</li>
+        <li>A process that arrives mid-round can be picked straight away, so short newcomers do not wait for a full round.</li>
+        <li>In dynamic mode the quantum for each round is the mean remaining time of the ready processes, rounded up.</li>
+      </ol>
+      <p class="note">The paper’s abstract says ESRR combines RR and SRTF, lowers total waiting and turnaround time compared with RR, and lets long processes finish faster than under SRTF. The full pseudocode was not available to us, so the steps above are our interpretation of that idea. Replace them with the paper’s exact steps if your guide’s copy differs.</p>
+    </section>
+  </main>
+</div>
+<footer>Reference: P. Sinha, B. Prabadevi, S. Dutta, N. Deepa, N. Kumari, “Efficient Process Scheduling Algorithm using RR and SRTF,” ic-ETITE 2020, doi 10.1109/ic-ETITE47903.2020.101. Self Learning Activity, Operating System, SAKEC.</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const PRE={a:[[0,8],[1,4],[2,9],[3,5]],b:[[0,10],[1,2],[2,2],[4,2],[6,2],[8,2]],c:[[0,7],[2,4],[4,1],[5,4]]};
+let procs=[];
+
+/* ---------- scheduling algorithms ---------- */
+const mk=ps=>ps.map(p=>({...p,rem:p.bt,rt:null,ct:0}));
+const nextArr=(L,t)=>Math.min(...L.filter(p=>p.rem>0&&p.at>t).map(p=>p.at));
+const begin=(p,t)=>{if(p.rt===null)p.rt=t-p.at};
+function push(tl,id,s,e){const l=tl[tl.length-1];if(l&&l.id===id&&l.e===s)l.e=e;else tl.push({id,s,e})}
+
+function rr(ps,Q){
+  const L=mk(ps).sort((a,b)=>a.at-b.at),tl=[],q=[];let t=0,i=0,done=0;
+  const adm=()=>{while(i<L.length&&L[i].at<=t)q.push(L[i++])};
+  while(done<L.length){
+    adm();
+    if(!q.length){const n=L[i].at;push(tl,'idle',t,n);t=n;continue}
+    const p=q.shift();begin(p,t);
+    const d=Math.min(Q,p.rem);push(tl,p.id,t,t+d);t+=d;p.rem-=d;adm();
+    if(p.rem>0)q.push(p);else{p.ct=t;done++}
+  }
+  return{L,tl};
+}
+function srtf(ps){
+  const L=mk(ps),tl=[];let t=0,done=0;
+  while(done<L.length){
+    const r=L.filter(p=>p.rem>0&&p.at<=t);
+    if(!r.length){const n=nextArr(L,t);push(tl,'idle',t,n);t=n;continue}
+    r.sort((a,b)=>a.rem-b.rem||a.at-b.at);
+    const p=r[0];begin(p,t);
+    const d=Math.min(p.rem,nextArr(L,t)-t);   // preemption can only happen at an arrival
+    push(tl,p.id,t,t+d);t+=d;p.rem-=d;
+    if(!p.rem){p.ct=t;done++}
+  }
+  return{L,tl};
+}
+function esrr(ps,Q0,dyn){
+  const L=mk(ps),tl=[],served=new Set();let t=0,done=0,Q=Q0;
+  while(done<L.length){
+    const r=L.filter(p=>p.rem>0&&p.at<=t);
+    if(!r.length){const n=nextArr(L,t);push(tl,'idle',t,n);t=n;continue}
+    let c=r.filter(p=>!served.has(p.id));
+    if(!c.length){served.clear();c=r}
+    if(served.size===0&&dyn)Q=Math.max(1,Math.ceil(r.reduce((s,p)=>s+p.rem,0)/r.length)); // new round
+    c.sort((a,b)=>a.rem-b.rem||a.at-b.at);
+    const p=c[0];begin(p,t);
+    const d=Math.min(Q,p.rem);push(tl,p.id,t,t+d);t+=d;p.rem-=d;
+    if(p.rem>0)served.add(p.id);else{p.ct=t;done++}
+  }
+  return{L,tl};
+}
+function metrics({L,tl}){
+  const rows=L.map(p=>{const tat=p.ct-p.at;return{id:p.id,at:p.at,bt:p.bt,ct:p.ct,tat,wt:tat-p.bt,rt:p.rt}});
+  const avg=k=>rows.reduce((s,r)=>s+r[k],0)/rows.length;
+  const run=tl.filter(x=>x.id!=='idle');let cs=0;
+  for(let i=1;i<run.length;i++)if(run[i].id!==run[i-1].id)cs++;
+  const end=tl[tl.length-1].e,busy=run.reduce((s,x)=>s+x.e-x.s,0);
+  return{rows,wt:avg('wt'),tat:avg('tat'),rt:avg('rt'),mx:Math.max(...rows.map(r=>r.wt)),cs,util:busy/end*100,end,tl};
+}
+function simulate(ps,Q,dyn){
+  return{rr:metrics(rr(ps,Q)),srtf:metrics(srtf(ps)),esrr:metrics(esrr(ps,Q,dyn))};
+}
+
+/* ---------- interface ---------- */
+const col=id=>{const i=procs.findIndex(p=>p.id===id);return`hsl(${(i*53+200)%360} 52% 38%)`};
+const f2=n=>n.toFixed(2);
+function drawList(){
+  $('#plist').innerHTML=procs.length?`<table><thead><tr><th>ID</th><th>Arrival</th><th>Burst</th><th><span class="sr" hidden>Remove</span></th></tr></thead><tbody>${procs.map((p,i)=>`<tr><td><span class="chip" style="background:${col(p.id)}">${p.id}</span></td><td>${p.at}</td><td>${p.bt}</td><td><button class="x" data-i="${i}" aria-label="Remove ${p.id}">Remove</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">No processes yet. Add one above or load a sample.</p>';
+}
+function lane(name,sub,m,hl){
+  const step=Math.max(1,Math.ceil(m.end/20)),ticks=[];for(let t=0;t<=m.end;t+=step)ticks.push(t);
+  return`<div class="lane${hl?' hl':''}"><h3>${name}<small>${sub}</small></h3><div class="bar" role="img" aria-label="${name} timeline">${m.tl.map(x=>{const w=(x.e-x.s)/m.end*100;return`<div class="seg${x.id==='idle'?' idle':''}" style="width:${w}%;${x.id==='idle'?'':'background:'+col(x.id)}" title="${x.id}: ${x.s} to ${x.e}">${w>3.5?(x.id==='idle'?'idle':x.id):''}</div>`}).join('')}</div><div class="axis">${ticks.map(t=>`<span style="left:${t/m.end*100}%">${t}</span>`).join('')}</div></div>`;
+}
+function cmpTable(r){
+  const algs=[['Round Robin',r.rr],['SRTF',r.srtf],['ESRR',r.esrr]];
+  const cols=[['Avg waiting','wt',1],['Avg turnaround','tat',1],['Avg response','rt',1],['Max wait','mx',1],['Context switches','cs',0],['CPU utilization %','util',2]];
+  const best=cols.map(([,k])=>k==='util'?null:Math.min(...algs.map(a=>a[1][k])));
+  return`<table><thead><tr><th>Algorithm</th>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${algs.map(([n,m])=>`<tr><td>${n}</td>${cols.map(([,k,d],j)=>{const v=m[k];return`<td class="${best[j]!==null&&v===best[j]?'best':''}">${d?v.toFixed(d===2?1:2):v}</td>`}).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function detailTable(m){
+  return`<table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Completion</th><th>Turnaround</th><th>Waiting</th><th>Response</th></tr></thead><tbody>${m.rows.map(r=>`<tr><td><span class="chip" style="background:${col(r.id)}">${r.id}</span></td><td>${r.at}</td><td>${r.bt}</td><td>${r.ct}</td><td>${r.tat}</td><td>${r.wt}</td><td>${r.rt}</td></tr>`).join('')}</tbody></table>`;
+}
+function run(){
+  const Q=Math.max(1,parseInt($('#q').value)||1);
+  if(!procs.length){$('#lanes').innerHTML='';$('#cmp').innerHTML='';$('#detail').innerHTML='';$('#verdict').textContent='Add at least one process to compare the algorithms.';return}
+  const dyn=$('#mode').value==='dyn',r=simulate(procs,Q,dyn);
+  $('#lanes').innerHTML=lane('Round Robin','fixed quantum '+Q,r.rr,0)+lane('SRTF','preemptive, shortest remaining time',r.srtf,0)+lane('ESRR',dyn?'dynamic quantum':'fixed quantum '+Q,r.esrr,1);
+  $('#cmp').innerHTML=cmpTable(r);$('#detail').innerHTML=detailTable(r.esrr);
+  const e=r.esrr;
+  $('#verdict').textContent=`Average waiting time: ESRR ${f2(e.wt)}, Round Robin ${f2(r.rr.wt)}, SRTF ${f2(r.srtf.wt)}. Longest single wait: ESRR ${e.mx}, Round Robin ${r.rr.mx}, SRTF ${r.srtf.mx}.`;
+}
+function refresh(){drawList();run()}
+function preset(k){procs=(PRE[k]||[]).map((p,i)=>({id:'P'+(i+1),at:p[0],bt:p[1]}));refresh()}
+
+if(typeof document!=='undefined'&&document.querySelector){
+  $('#f').addEventListener('submit',e=>{
+    e.preventDefault();const at=Number($('#at').value),bt=Number($('#bt').value);
+    if(procs.length>=12){$('#msg').textContent='Maximum 12 processes. Remove one to add another.';return}
+    if(!Number.isInteger(at)||at<0||!Number.isInteger(bt)||bt<1){$('#msg').textContent='Arrival must be a whole number of 0 or more, and burst a whole number of 1 or more.';return}
+    $('#msg').textContent='';const used=procs.map(p=>+p.id.slice(1));procs.push({id:'P'+(Math.max(0,...used)+1),at,bt});refresh();
+  });
+  $('#plist').addEventListener('click',e=>{const b=e.target.closest('.x');if(b){procs.splice(+b.dataset.i,1);refresh()}});
+  $('#preset').addEventListener('change',e=>preset(e.target.value));
+  $('#run').addEventListener('click',run);$('#q').addEventListener('input',run);$('#mode').addEventListener('change',run);
+  $('#clr').addEventListener('click',()=>{procs=[];$('#preset').value='';$('#msg').textContent='';refresh()});
+  preset('a');
+}
+</script>
+</body>
+</html>

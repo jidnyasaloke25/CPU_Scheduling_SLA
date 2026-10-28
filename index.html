@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPU Process Scheduling Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-icon">CPU</div><div><h2>Schedulify</h2><p>OS Lab Simulator</p></div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <a class="nav-item active" href="#dashboard">▦ &nbsp; Dashboard</a>
+      <a class="nav-item" href="#processes">▤ &nbsp; Process Queue</a>
+      <a class="nav-item" href="#results">▥ &nbsp; Results</a>
+      <a class="nav-item" href="research.html">▧ &nbsp; Research Papers</a>
+      <div class="side-note"><strong>Algorithms</strong><span>SJF · SRTF · ESRR</span><p>CPU scheduling visualizer for your Operating Systems SLA.</p></div>
+    </aside>
+
+    <main class="main" id="dashboard">
+      <header class="topbar">
+        <div><p class="eyebrow">OPERATING SYSTEMS • SLA PROJECT</p><h1>CPU Scheduling Simulator</h1><p class="subtitle">Visualize process execution and compare scheduling performance.</p></div>
+        <div class="status"><span class="status-dot"></span> Simulator ready</div>
+      </header>
+
+      <section class="stats">
+        <article class="stat-card"><div class="stat-icon blue">▤</div><p>Total Processes</p><strong id="statProcesses">0</strong><small>In the ready queue</small></article>
+        <article class="stat-card"><div class="stat-icon violet">◷</div><p>Average Waiting Time</p><strong id="statWaiting">—</strong><small>Time units</small></article>
+        <article class="stat-card"><div class="stat-icon cyan">◴</div><p>Average Turnaround</p><strong id="statTurnaround">—</strong><small>Time units</small></article>
+        <article class="stat-card"><div class="stat-icon navy">▰</div><p>CPU Utilization</p><strong id="statUtilization">—</strong><small>Busy time / elapsed time</small></article>
+      </section>
+
+      <section class="panel" id="processes">
+        <div class="panel-heading"><div><h2>Process Input</h2><p>Add processes to the ready queue.</p></div><button class="btn btn-light" id="loadExample">Load Example</button></div>
+        <form id="processForm" class="process-form">
+          <label>Process ID<input id="pid" type="text" placeholder="e.g. P1" maxlength="8" required></label>
+          <label>Arrival Time<input id="arrival" type="number" min="0" step="1" value="0" required></label>
+          <label>Burst Time<input id="burst" type="number" min="1" step="1" value="5" required></label>
+          <button class="btn btn-primary" type="submit">＋ Add Process</button>
+        </form>
+        <div class="table-wrap"><table><thead><tr><th>Process ID</th><th>Arrival Time</th><th>Burst Time</th><th>Remaining Time</th><th>Action</th></tr></thead><tbody id="processTable"><tr><td colspan="5" class="empty">No processes added yet. Add a process or load the example.</td></tr></tbody></table></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading"><div><h2>Run Simulation</h2><p>Choose an algorithm and simulate CPU allocation.</p></div></div>
+        <div class="algorithm-row">
+          <label class="algorithm-option"><input type="radio" name="algorithm" value="SJF" checked><span><strong>SJF</strong><small>Shortest Job First · Non-preemptive</small></span></label>
+          <label class="algorithm-option"><input type="radio" name="algorithm" value="SRTF"><span><strong>SRTF</strong><small>Shortest Remaining Time First · Preemptive</small></span></label>
+          <label class="algorithm-option"><input type="radio" name="algorithm" value="ESRR"><span><strong>ESRR</strong><small>Efficient Shortest Remaining Time Round Robin</small></span></label>
+          <button class="btn btn-primary run-btn" id="runSimulation">▶ Run Simulation</button>
+          <button class="btn btn-light" id="clearAll">Clear All</button>
+        </div>
+        <div class="esrr-controls">
+          <label>ESRR / Round Robin Time Quantum
+            <input id="esrrQuantum" type="number" min="1" step="1" value="3">
+          </label>
+          <label>ESRR Quantum Mode
+            <select id="esrrMode">
+              <option value="dyn">Dynamic: mean remaining time each round</option>
+              <option value="fix">Fixed: use the quantum above</option>
+            </select>
+          </label>
+        </div>
+        <p class="hint">SJF runs a selected process until it finishes. SRTF can interrupt a process when a shorter job arrives. ESRR combines shortest-remaining-time ordering with round-based time slicing.</p>
+      </section>
+
+      <section class="panel" id="results">
+        <div class="panel-heading"><div><h2>Gantt Chart</h2><p id="ganttSubtitle">Run a simulation to view the execution timeline.</p></div><span class="tag" id="algorithmTag">Not run</span></div>
+        <div id="ganttChart" class="gantt-chart"><div class="empty gantt-empty">Your CPU execution timeline will appear here.</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading"><div><h2>Performance Results</h2><p>Calculated values for the selected scheduling algorithm.</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Completion</th><th>Turnaround</th><th>Waiting</th><th>Response</th></tr></thead><tbody id="resultsTable"><tr><td colspan="7" class="empty">No results to display.</td></tr></tbody></table></div>
+        <div class="summary-row"><div><span>Average waiting time</span><strong id="avgWait">—</strong></div><div><span>Average turnaround time</span><strong id="avgTurn">—</strong></div><div><span>CPU utilization</span><strong id="cpuUtil">—</strong></div></div>
+      </section>
+      <footer>CPU Process Scheduling Simulator <span>•</span> SJF, SRTF &amp; ESRR</footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

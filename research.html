@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Papers | Schedulify</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .nav-item:focus-visible,.btn:focus-visible,.jump a:focus-visible{outline:3px solid #5ba1d8;outline-offset:2px}
+    .jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+    .jump a{background:#fff;border:1px solid var(--line);border-radius:20px;padding:8px 14px;color:#1769aa;text-decoration:none;font-weight:600;font-size:13px}
+    .jump a:hover{background:#edf5fc;border-color:#5b9ed2}
+    .glance td,.glance th{white-space:normal;vertical-align:top;font-size:13px;line-height:1.5}
+    .glance td:first-child{font-weight:800;font-size:18px;color:#1769aa;width:48px}
+    .glance a{color:#1769aa;font-weight:700;text-decoration:none}
+    .glance ul,.sec ul{margin:0;padding-left:18px}
+    .glance li,.sec li{margin-bottom:5px}
+    .paper{scroll-margin-top:16px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px}
+    .meta{border-right:1px solid var(--line);padding-right:22px}
+    .num{font-size:44px;font-weight:800;color:#1769aa;line-height:1;letter-spacing:-1px}
+    .meta h2{font-size:17px;line-height:1.35;margin:10px 0 14px}
+    .meta dl{margin:0 0 16px}.meta dt{font-size:12px;font-weight:700;color:#4b5d70;margin-top:10px}
+    .meta dd{margin:3px 0 0;font-size:13px;line-height:1.5;color:#17283a}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+    .tags .tag{font-size:12px}
+    .sec{margin-bottom:18px}.sec:last-child{margin-bottom:0}
+    .sec h3{font-size:14px;margin:0 0 7px;color:#102a43}
+    .sec p,.sec li{margin:0;font-size:14px;line-height:1.65;color:#2d4155}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .relevance{background:#f0f7fd;border:1px solid #cfe3f5;border-radius:10px;padding:14px 16px}
+    .btn.link{display:inline-flex;align-items:center;text-decoration:none;height:auto;min-height:38px;padding:9px 14px;white-space:normal;line-height:1.35;margin:0 6px 6px 0}
+    @media(max-width:900px){.paper{grid-template-columns:1fr}.meta{border-right:0;border-bottom:1px solid var(--line);padding:0 0 18px}.cols{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-icon">CPU</div><div><h2>Schedulify</h2><p>OS Lab Simulator</p></div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <a class="nav-item" href="index.html#dashboard">▦ &nbsp; Dashboard</a>
+      <a class="nav-item" href="index.html#processes">▤ &nbsp; Process Queue</a>
+      <a class="nav-item" href="index.html#results">▥ &nbsp; Results</a>
+      <a class="nav-item active" href="research.html" aria-current="page">▧ &nbsp; Research Papers</a>
+      <div class="side-note"><strong>Algorithms</strong><span>SJF · SRTF · ESRR</span><p>CPU scheduling visualizer for your Operating Systems SLA.</p></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><p class="eyebrow">OPERATING SYSTEMS • SLA PROJECT</p><h1>Research Papers</h1><p class="subtitle">The five papers we studied on CPU scheduling, with what each one did and how it relates to this project.</p></div>
+        <a class="btn btn-light link" href="index.html#dashboard" style="display:inline-flex;align-items:center;text-decoration:none">← Back to Dashboard</a>
+      </header>
+
+      <nav class="jump" aria-label="Jump to a paper" id="jump"></nav>
+
+      <section class="panel">
+        <div class="panel-heading"><div><h2>At a glance</h2><p>All five papers side by side.</p></div></div>
+        <div class="table-wrap"><table class="glance"><thead><tr><th>No.</th><th>Research paper</th><th>Year</th><th>Work done</th><th>Final result</th></tr></thead><tbody id="glance"></tbody></table></div>
+      </section>
+
+      <div id="papers"></div>
+      <footer>CPU Process Scheduling Simulator <span>•</span> SJF, SRTF &amp; ESRR <span>•</span> Research Papers</footer>
+    </main>
+  </div>
+
+<script>
+const PAPERS=[
+{id:'p1',year:2025,title:'Predicting CPU Burst Times with ML to Enhance SJF and SRTF',full:'Predicting CPU Burst Times with ML to Enhance Shortest Job First (SJF) and Shortest Remaining Time First (SRTF) CPU Scheduling',
+ authors:'Emmanuel Effah et al.',source:'International Journal of Computer Science and Information Security (IJCSIS)',
+ link:'https://www.researchgate.net/publication/397058205_Predicting_CPU_Burst_Times_with_ML_to_Enhance_Shortest_Job_First_SJF_and_Shortest_Remaining_Time_First_SRTF_CPU_Scheduling',
+ tags:['SJF','SRTF','Machine learning'],
+ work:['Used ML models to predict CPU burst time.','Tested KNN, SVM, Random Forest, XGBoost and ANN.'],
+ result:['ANN + SVM reduced prediction error from 20.67 ms to 4.12 ms.','Improved SJF/SRTF scheduling.'],
+ problem:'SJF and SRTF need to know each process’s CPU burst time, but the exact value is not known before a process runs. This makes them hard to use for changing workloads.',
+ approach:'The paper predicts CPU burst times with machine learning (KNN, SVM, Decision Tree, Random Forest, XGBoost and Artificial Neural Networks) and uses the predicted burst time to support SJF and SRTF decisions.',
+ findings:['ANN-based approaches gave low burst-time prediction error.','ML-based prediction performed better than the baseline used in the study.','Predicted burst times can support better SJF and SRTF scheduling decisions.'],
+ limits:['The study uses a synthetic workload dataset.','More testing is needed with real-world and kernel-level workloads.'],
+ relevance:'It connects burst-time prediction directly with both SJF and SRTF. It gives a future extension for our project, where predicted burst times are supplied to our schedulers.'},
+{id:'p2',year:2024,title:'Performance Assessment of CPU Scheduling Algorithms',full:'Performance Assessment of CPU Scheduling Algorithms: A Scenario-Based Approach with FCFS, RR, and SJF',
+ authors:'Hajjar, Mekhallalati, Annwty, Alghayadh, Keshta, Algabri',source:'Journal of Computer Science',
+ link:'https://thescipub.com/abstract/jcssp.2024.972.985',tags:['FCFS','Round Robin','SJF','Simulation'],
+ work:['Used a Java simulation with 8 processes.','Tested FCFS, RR and SJF under different conditions.'],
+ result:['SJF gave the lowest response and turnaround time.','RR became similar to FCFS with a larger time quantum.'],
+ problem:'Scheduling algorithms behave differently under different workloads, so they must be evaluated in several scenarios using measurable parameters.',
+ approach:'A Java-based simulation generates process arrival and burst times and tests FCFS, Round Robin and SJF under different scenarios.',
+ findings:['Scheduling performance depends on workload conditions.','SJF performs well when shorter jobs can be identified.','Simulation can compare algorithms using measurable parameters such as response time and context switching.'],
+ limits:['The study covers FCFS, RR and SJF and does not directly implement SRTF.'],
+ relevance:'Our project also uses simulation to study CPU scheduling. The scenario-based approach helped us design test workloads, such as the ones in the ESRR comparison page.'},
+{id:'p3',year:2024,title:'Optimizing Task Scheduling in Cloud Computing: Enhanced SJF',full:'Optimizing Task Scheduling in Cloud Computing: An Enhanced Shortest Job First Algorithm',
+ authors:'Yellamma Pachipala, Kavya Sri Sureddy, A.B.S. Sriya Kaitepalli, Nagalakshmi Pagadala, Sai Satwik Nalabothu, Mihir Iniganti',source:'Procedia Computer Science',
+ link:'https://www.sciencedirect.com/science/article/pii/S1877050924006094',tags:['SJF','Cloud','CloudSim'],
+ work:['Created a modified SJF for cloud tasks.','Tested it using CloudSim.'],
+ result:['Reduced resource problems and task completion time.','Improved cloud scheduling.'],
+ problem:'Traditional task scheduling in cloud environments can face resource bottlenecks and inefficient task completion. The study looks at how SJF can be modified for better task scheduling.',
+ approach:'The paper introduces a Modified SJF algorithm and evaluates it with the CloudSim simulation framework for cloud task scheduling.',
+ findings:['Focuses on improving resource utilization.','Aims to reduce task completion time and resource bottlenecks.','Uses simulation to evaluate the modified SJF approach.'],
+ limits:['The approach is designed for cloud task scheduling and may need adaptation before it is applied to general CPU scheduling.'],
+ relevance:'It shows how the basic SJF idea can be enhanced for modern computing environments, and points to a direction for extending our project beyond plain SJF.'},
+{id:'p4',year:2021,title:'A Review on the CPU Scheduling Algorithms: Comparative Study',full:'A Review on the CPU Scheduling Algorithms: Comparative Study',
+ authors:'E. E. El-Sharawy',source:'International Journal of Computer Science and Network Security (IJCSNS)',
+ link:'https://www.researchgate.net/publication/351330519_A_Review_on_the_CPU_Scheduling_Algorithms_Comparative_Study',tags:['FCFS','RR','SJF','Priority','Review'],
+ work:['Studied FCFS, RR, SJF and Priority Scheduling.','Compared results from earlier studies.'],
+ result:['No algorithm is best for every situation.','SJF reduces waiting time, while RR provides better fairness.'],
+ problem:'Scheduling algorithms differ in waiting time, response time and turnaround time, so the right choice depends on the requirements of the system.',
+ approach:'The paper reviews and compares the most used scheduling algorithms: Round Robin, SJF, FCFS and Priority Scheduling.',
+ findings:['Each algorithm has its own advantages and disadvantages.','SJF is useful for minimizing waiting time when good burst-time information is available.'],
+ limits:['The paper is mainly a review and does not introduce a new scheduling algorithm.'],
+ relevance:'It gives the background for understanding SJF and for comparing scheduling algorithms using performance parameters.'},
+{id:'p5',year:2020,title:'Efficient Process Scheduling Algorithm using RR and SRTF (ESRR)',full:'Efficient Process Scheduling Algorithm using RR and SRTF',
+ authors:'Preeti Sinha, B. Prabadevi, Sonia Dutta, N. Deepa, Neha Kumari',source:'2020 International Conference on Emerging Trends in Information Technology and Engineering (ic-ETITE), IEEE. DOI 10.1109/ic-ETITE47903.2020.101',
+ link:'https://ieeexplore.ieee.org/document/9077908/',tags:['SRTF','Round Robin','ESRR','Hybrid'],
+ work:['Combined RR fairness with SRTF shortest-time selection.'],
+ result:['Reduced waiting and turnaround time compared with RR.','Long processes finished faster than with SRTF.'],
+ problem:'In SRTF, long processes can wait a very long time because short tasks keep executing. In Round Robin, short processes may wait longer than they should.',
+ approach:'The paper proposes ESRR (Efficient Shortest Remaining Time Round Robin), a hybrid that combines the time-sharing idea of Round Robin with the shortest-remaining-time selection of SRTF.',
+ findings:['ESRR aims to reduce waiting time and turnaround time.','It reduces the waiting of longer processes while keeping the advantages of SRTF.','It shows how hybrid algorithms can improve traditional scheduling.'],
+ limits:['The algorithm is more complex than traditional SRTF and Round Robin.'],
+ relevance:'This is the paper we implemented. The ESRR option in the simulator and the comparison page both build on its idea, using our own interpretation of the steps.',
+ extra:[['Try ESRR in the simulator','index.html#dashboard'],['Open the RR vs SRTF vs ESRR comparison','esrr_scheduler.html']]}
+];
+const li=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+document.getElementById('jump').innerHTML=PAPERS.map((p,i)=>`<a href="#${p.id}">Paper ${i+1} · ${p.year}</a>`).join('');
+document.getElementById('glance').innerHTML=PAPERS.map((p,i)=>`<tr><td>${i+1}</td><td><a href="#${p.id}">${p.title}</a></td><td>${p.year}</td><td>${li(p.work)}</td><td>${li(p.result)}</td></tr>`).join('');
+document.getElementById('papers').innerHTML=PAPERS.map((p,i)=>`
+<article class="panel paper" id="${p.id}" aria-labelledby="${p.id}-t">
+  <div class="meta">
+    <div class="num">${i+1}</div>
+    <h2 id="${p.id}-t">${p.full}</h2>
+    <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <dl><dt>Year</dt><dd>${p.year}</dd><dt>Authors</dt><dd>${p.authors}</dd><dt>Source</dt><dd>${p.source}</dd></dl>
+    <a class="btn btn-primary link" href="${p.link}" target="_blank" rel="noopener noreferrer">Open paper ↗</a>
+    ${(p.extra||[]).map(e=>`<a class="btn btn-light link" href="${e[1]}">${e[0]}</a>`).join('')}
+  </div>
+  <div class="detail">
+    <div class="sec"><h3>Problem addressed</h3><p>${p.problem}</p></div>
+    <div class="sec"><h3>Proposed approach</h3><p>${p.approach}</p></div>
+    <div class="sec cols"><div><h3>Work done</h3>${li(p.work)}</div><div><h3>Final result</h3>${li(p.result)}</div></div>
+    <div class="sec cols"><div><h3>Findings</h3>${li(p.findings)}</div><div><h3>Limitations</h3>${li(p.limits)}</div></div>
+    <div class="sec relevance"><h3>Relevance to our project</h3><p>${p.relevance}</p></div>
+  </div>
+</article>`).join('');
+</script>
+</body>
+</html>
